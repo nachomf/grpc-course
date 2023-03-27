@@ -35,4 +35,46 @@ class CalculatorServerImpl : CalculatorServiceGrpc.CalculatorServiceImplBase() {
 
         responseObserver!!.onCompleted()
     }
+
+    override fun avg(responseObserver: StreamObserver<AVGResponse>): StreamObserver<AVGRequest> {
+        val numbers = mutableListOf<Int>()
+
+        class CustomStreamObserver : StreamObserver<AVGRequest> {
+            override fun onNext(request: AVGRequest) {
+                numbers.add(request.number)
+            }
+
+            override fun onError(t: Throwable) {
+                responseObserver.onError(t)
+            }
+
+            override fun onCompleted() {
+                responseObserver.onNext(AVGResponse.newBuilder().setAvgResult(numbers.average()).build())
+                responseObserver.onCompleted()
+            }
+        }
+
+        return CustomStreamObserver()
+    }
+
+    override fun max(responseObserver: StreamObserver<MaxResponse>): StreamObserver<MaxRequest> {
+        val numbers = mutableListOf<Int>()
+
+        class CustomStreamObserver : StreamObserver<MaxRequest> {
+            override fun onNext(request: MaxRequest) {
+                numbers.add(request.number)
+                responseObserver.onNext(MaxResponse.newBuilder().addAllResult(numbers.sorted()).build())
+            }
+
+            override fun onError(t: Throwable) {
+                responseObserver.onError(t)
+            }
+
+            override fun onCompleted() {
+                responseObserver.onCompleted()
+            }
+        }
+
+        return CustomStreamObserver()
+    }
 }

@@ -7,9 +7,15 @@ option java_multiple_files = true;
 
 import "calculator/sum.proto";
 import "calculator/primes.proto";
+import "calculator/avg.proto";
+import "calculator/max.proto";
 
 service CalculatorService{
   rpc sum(SumRequest) returns (SumResponse);
 
   rpc prime(PrimeRequest) returns (stream PrimeResponse);
+
+  rpc avg(stream AVGRequest) returns (AVGResponse);
+
+  rpc max(stream MaxRequest) returns (stream MaxResponse);
 }
